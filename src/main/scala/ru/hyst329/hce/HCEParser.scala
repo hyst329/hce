@@ -9,15 +9,20 @@ class HCEParser(val input: ParserInput) extends Parser {
 
   def sentence: Rule1[Sentence] = rule {
     qualifier ~ `object` ~ verb ~ `object` ~ '.' ~>
-      ((q: Qualifier, e1: Entity, v: String, e2: Entity) => LogicSentence(q, e1, v, e2))
+      ((q: Qualifier,
+        e1: Entity,
+        v: String,
+        e2: Entity) => LogicSentence(q, e1, v, e2))
   }
 
   def qualifier: Rule1[Qualifier] = rule {
-    (atomic("all") ~> (() => All)) | (atomic("no") ~> (() => None)) ~ ws
+    ((atomic("all") ~> (() => All)) | (atomic("no") ~> (() => None))) ~ ws
   }
 
   def noun: Rule1[String] = rule {
-    word ~> ((w: String) => test(HCEKnowledgeBase.nounSingulars.contains(w)) ~ push(w))
+    word ~> ((w: String) =>
+      test(HCEKnowledgeBase.nounSingulars
+        .contains(w) || HCEKnowledgeBase.nounPlurals.contains(w)) ~ push(w))
   }
 
   def verb: Rule1[String] = rule {
@@ -49,7 +54,8 @@ class HCEParser(val input: ParserInput) extends Parser {
   }
 
   def `object`: Rule1[Entity] = rule {
-    zeroOrMore(adjective) ~ noun ~> ((as: Seq[String], n: String) => Entity(as.toList, n))
+    zeroOrMore(adjective) ~ noun ~> ((as: Seq[String],
+                                      n: String) => Entity(as.toList, n))
   }
 
   def word: Rule1[String] = rule {
