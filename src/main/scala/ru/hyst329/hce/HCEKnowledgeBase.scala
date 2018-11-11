@@ -19,6 +19,13 @@ object HCEKnowledgeBase {
     }
     list
   }
+
+  lazy val v0s: List[String] = verbs.map(_(0))
+  lazy val v1s: List[String] = verbs.map(_(1))
+  lazy val v2s: List[String] = verbs.map(_(2))
+  lazy val v3s: List[String] = verbs.map(_(3))
+  lazy val v4s: List[String] = verbs.map(_(4))
+
   lazy val nouns: List[List[String]] = {
     val rs = con.createStatement.executeQuery("SELECT singular, plural FROM nouns")
     var list: List[List[String]] = List.empty
@@ -27,4 +34,7 @@ object HCEKnowledgeBase {
     }
     list
   }
+
+  lazy val nounSingulars: List[String] = nouns.map(_(0))
+  lazy val nounPlurals: List[String] = nouns.map(_(1))
 }
